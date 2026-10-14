@@ -24,13 +24,13 @@
 
 // STEP 1: Your regular menu. An array of object literals.
 // Each item needs at least: name, price, category, emoji.
-const addItem = document.getElementById("addItem");
-const removeItem = document.getElementById("removeItem");
-const finishOrder = document.getElementById("finishOrder");
+const addItemBtn = document.getElementById("addItem");
+const removeItemBtn = document.getElementById("removeItem");
+const finishOrderBtn = document.getElementById("finishOrder");
 
-// addItem.addEventListener("click", )
-// removeItem.addEventListener("click", )
-// finishOrder.addEventListener("click", )
+addItemBtn.addEventListener("click", addItem);
+removeItemBtn.addEventListener("click", removeItem);
+finishOrderBtn.addEventListener("click", printReceipt);
 
 let menu = [
   // The regular menu
@@ -90,63 +90,56 @@ function updateList() {
 // Ask for the customer's name with window.prompt().
 let cart = [];
 let ordering = true;
+let removing = true;
 let total = 0;
 
 function updateName() {
   let customerName = window.prompt("What is your name?");
   let customerLabel = document.getElementById("customer-name");
-
-  if (customerName.length > 0) {
-    customerLabel.textContent = customerName;
-  } else {
-    updateName();
-  }
+  customerLabel.textContent = customerName;
 }
 
 // STEP 6: A do...while loop that keeps taking orders until the customer is done.
 // Inside it: add items to the cart, let them remove an item, update the order total.
-function orderFunction() {
-  function addItem() {
-    let requestedItem = window.prompt(
-      "Type the item you would like to add to the cart"
-    );
 
-    for (let i = 0; i < fullMenu.length; i++) {
-      if (fullMenu[i].name.toLowerCase() === requestedItem.toLowerCase()) {
-        cart.push(fullMenu[i]); // add the item they selected IF its in the menu
-      }
+function findItem(itemName) {
+  for (let i = 0; i < cart.length; i++) {
+    if (cart[i].name === itemName) {
+      console.log("Found item");
     }
   }
+}
 
-  function removeItem() {
-    let removeItem = window.prompt("Type the item you would like to remove");
-
-    for (let i = 0; i < cart.length; i++) {
-      if (cart[i].name.toLowerCase() === removeItem.toLowerCase()) {
-        // remove the item from the cart array IF its there
-        cart.pop(cart[i]);
-      }
-    }
-  }
-
-  function stopOrder() {
-    ordering = false;
-    printReceipt();
-  }
+function addItem() {
+  ordering = true;
 
   do {
-    let selectedNumber = window.prompt("1 = add, 2 = remove, 3 = finish");
+    let status = window.prompt(
+      "Would you like to add a new item to the cart? (Yes or No)"
+    );
 
-    if (selectedNumber === "1") {
-      addItem();
-    } else if (selectedNumber === "2") {
-      removeItem();
-    } else if (selectedNumber === "3") {
-      stopOrder();
+    if (status !== null) {
+      // only lower case  if the status is not empty
+      status.toLowerCase();
+    }
+
+    if (status === "yes") {
+      let requestedItem = window.prompt("What would you like to add?");
+
+      for (let i = 0; i < fullMenu.length; i++) {
+        if (fullMenu[i].name.toLowerCase() === requestedItem.toLowerCase()) {
+          cart.push(fullMenu[i]); // add the item they selected IF its in the menu
+        }
+      }
     } else {
-      alert("Please input a number from 1-3");
+      ordering = false;
     }
   } while (ordering);
+}
+
+function removeItem() {
+  cart.pop();
+  printReceipt();
 }
 
 // do{
@@ -159,6 +152,10 @@ function orderFunction() {
 function printReceipt() {
   let receiptList = document.getElementById("receipt-lines");
   let totalPrice = document.getElementById("order-total");
+
+  receiptList.innerHTML = ""; // clear the old info
+  totalPrice.textContent = "";
+  total = 0;
 
   let i = 0;
 
@@ -176,14 +173,7 @@ function printReceipt() {
 
 function initialize() {
   updateList();
-
-  const timer = setInterval(() => {
-    // start a timer that runs every 2 seconds
-    // let the website load by starting a 2 second timer then ending it
-    clearInterval(timer); // clear it after one tick since the website is loaded
-    // updateName();
-    // orderFunction();
-  }, 2000);
+  updateName();
 }
 
 initialize();
