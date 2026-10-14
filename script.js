@@ -24,6 +24,13 @@
 
 // STEP 1: Your regular menu. An array of object literals.
 // Each item needs at least: name, price, category, emoji.
+const addItem = document.getElementById("addItem");
+const removeItem = document.getElementById("removeItem");
+const finishOrder = document.getElementById("finishOrder");
+
+// addItem.addEventListener("click", )
+// removeItem.addEventListener("click", )
+// finishOrder.addEventListener("click", )
 
 let menu = [
   // The regular menu
@@ -81,14 +88,66 @@ function updateList() {
 
 // STEP 5: An order object (customer name, total) and an empty cart array.
 // Ask for the customer's name with window.prompt().
-
-// let customerName = window.prompt("What is your name?");
-let totalPrice = 0;
 let cart = [];
 let ordering = true;
+let total = 0;
+
+function updateName() {
+  let customerName = window.prompt("What is your name?");
+  let customerLabel = document.getElementById("customer-name");
+
+  if (customerName.length > 0) {
+    customerLabel.textContent = customerName;
+  } else {
+    updateName();
+  }
+}
 
 // STEP 6: A do...while loop that keeps taking orders until the customer is done.
 // Inside it: add items to the cart, let them remove an item, update the order total.
+function orderFunction() {
+  function addItem() {
+    let requestedItem = window.prompt(
+      "Type the item you would like to add to the cart"
+    );
+
+    for (let i = 0; i < fullMenu.length; i++) {
+      if (fullMenu[i].name.toLowerCase() === requestedItem.toLowerCase()) {
+        cart.push(fullMenu[i]); // add the item they selected IF its in the menu
+      }
+    }
+  }
+
+  function removeItem() {
+    let removeItem = window.prompt("Type the item you would like to remove");
+
+    for (let i = 0; i < cart.length; i++) {
+      if (cart[i].name.toLowerCase() === removeItem.toLowerCase()) {
+        // remove the item from the cart array IF its there
+        cart.pop(cart[i]);
+      }
+    }
+  }
+
+  function stopOrder() {
+    ordering = false;
+    printReceipt();
+  }
+
+  do {
+    let selectedNumber = window.prompt("1 = add, 2 = remove, 3 = finish");
+
+    if (selectedNumber === "1") {
+      addItem();
+    } else if (selectedNumber === "2") {
+      removeItem();
+    } else if (selectedNumber === "3") {
+      stopOrder();
+    } else {
+      alert("Please input a number from 1-3");
+    }
+  } while (ordering);
+}
 
 // do{
 
@@ -97,8 +156,34 @@ let ordering = true;
 // STEP 7: Copy the cart with the spread operator for the final receipt.
 // Use a while loop to build the receipt lines, then show the receipt and total on the page.
 
+function printReceipt() {
+  let receiptList = document.getElementById("receipt-lines");
+  let totalPrice = document.getElementById("order-total");
+
+  let i = 0;
+
+  while (i < cart.length) {
+    total += cart[i].price;
+
+    receiptList.innerHTML += `<li><span>${cart[i].name}</span><span>$${cart[
+      i
+    ].price.toFixed(2)}</span></li>`;
+    i++;
+  }
+
+  totalPrice.textContent = "$" + total.toFixed(2);
+}
+
 function initialize() {
   updateList();
+
+  const timer = setInterval(() => {
+    // start a timer that runs every 2 seconds
+    // let the website load by starting a 2 second timer then ending it
+    clearInterval(timer); // clear it after one tick since the website is loaded
+    // updateName();
+    // orderFunction();
+  }, 2000);
 }
 
 initialize();
